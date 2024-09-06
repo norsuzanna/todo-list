@@ -2,11 +2,7 @@
   <div id="app">
     <h1>To-Do List</h1>
     <AddTodo @add-todo="addTodo" />
-    <TodoList
-      :todos="todos"
-      @toggle-complete="toggleComplete"
-      @delete-todo="deleteTodo"
-    />
+    <TodoList :todos="todos" @toggle-complete="toggleComplete" @delete-todo="deleteTodo" />
   </div>
 </template>
 
@@ -41,17 +37,19 @@ export default {
     },
 
     // Add a new task by sending a POST request to the backend
-    async addTodo(title, description) {
+    async addTodo(title) {
+
       const newTodo = {
-        id: Date.now(), // Or leave it out and let the backend handle it
+        id: Date.now(),
         title: title,
-        description: description,
+        description: '',
         completed: false,
       };
+
+      console.log(typeof (newTodo.id));
       try {
         const response = await axios.post('https://m8vqll-8000.csb.app/todos', newTodo);
         this.todos.push(response.data);
-        this.fetchTodos();
       } catch (error) {
         console.error('Error adding todo:', error);
       }
@@ -59,14 +57,17 @@ export default {
 
     // Toggle the completion status of a task by sending a PUT request
     async toggleComplete(id) {
-      const todo = this.todos.find((todo) => todo.id === id);
+      let todo = this.todos.find((todo) => todo.id === id);
+      console.log('todo: ', todo);
       if (todo) {
         const updatedTodo = {
           ...todo,
           completed: !todo.completed,
         };
+
+        console.log('updatedTodo: ', updatedTodo);
         try {
-          const response = await axios.put(`https://m8vqll-8000.csb.app/${id}`, updatedTodo);
+          const response = await axios.put(`https://m8vqll-8000.csb.app/todos/${id}`, updatedTodo);
           todo.completed = response.data.completed;
         } catch (error) {
           console.error('Error updating todo:', error);
@@ -76,8 +77,9 @@ export default {
 
     // Delete a task by sending a DELETE request
     async deleteTodo(id) {
+      console.log(typeof (id));
       try {
-        await axios.delete(`https://m8vqll-8000.csb.app/${id}`);
+        await axios.delete(`https://m8vqll-8000.csb.app/todos/${id}`);
         this.todos = this.todos.filter((todo) => todo.id !== id);
       } catch (error) {
         console.error('Error deleting todo:', error);
@@ -93,6 +95,7 @@ export default {
   text-align: center;
   margin-top: 20px;
 }
+
 h1 {
   color: #42b983;
 }
