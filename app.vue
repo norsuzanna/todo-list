@@ -46,7 +46,6 @@ export default {
         completed: false,
       };
 
-      console.log(typeof (newTodo.id));
       try {
         const response = await axios.post('https://m8vqll-8000.csb.app/todos', newTodo);
         this.todos.push(response.data);
@@ -58,14 +57,12 @@ export default {
     // Toggle the completion status of a task by sending a PUT request
     async toggleComplete(id) {
       let todo = this.todos.find((todo) => todo.id === id);
-      console.log('todo: ', todo);
       if (todo) {
         const updatedTodo = {
           ...todo,
-          completed: !todo.completed,
+          completed: todo.completed,
         };
 
-        console.log('updatedTodo: ', updatedTodo);
         try {
           const response = await axios.put(`https://m8vqll-8000.csb.app/todos/${id}`, updatedTodo);
           todo.completed = response.data.completed;
@@ -77,7 +74,6 @@ export default {
 
     // Delete a task by sending a DELETE request
     async deleteTodo(id) {
-      console.log(typeof (id));
       try {
         await axios.delete(`https://m8vqll-8000.csb.app/todos/${id}`);
         this.todos = this.todos.filter((todo) => todo.id !== id);
